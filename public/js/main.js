@@ -4,8 +4,8 @@ const roomName = document.getElementById('room-name');
 const userList = document.getElementById('users');
 
 // Pegando o usuário e a sala pela URL
-const {username, room} = Qs.parse(location.search, {
-  ignoreQueryPrefix: true
+const { username, room } = Qs.parse(location.search, {
+  ignoreQueryPrefix: true,
 });
 
 const socket = io();
@@ -34,12 +34,16 @@ chatForm.addEventListener('submit', (e) => {
 
   // Capturando a mensagem
   let msg = e.target.elements.msg.value;
+
   msg = msg.trim();
-  if(!msg){
+
+  if (!msg) {
     return false;
   }
+
   // Enviando uma mensagem para o servidor
   socket.emit('chatMessage', msg);
+
   // Limpando a mensagem do campo de mensagem e setando o foco pra ele
   e.target.elements.msg.value = '';
   e.target.elements.msg.focus();
@@ -52,7 +56,7 @@ function outputMessage(message){
   const p = document.createElement('p');
   p.classList.add('meta');
   p.innerText = message.username;
-  p.innerHTML += `<span> ${message.time}</span>`;
+  p.innerHTML += `<span>${message.time}</span>`;
   div.appendChild(p);
   const para = document.createElement('p');
   para.classList.add('text');
@@ -78,7 +82,7 @@ function outputUsers(users){
 
 // Perguntando se o usuário tem certeza que quer sair da sala
 document.getElementById('leave-btn').addEventListener('click', () => {
-  const leaveRoom = confirm('Você tem certeza que deseja sair da sala?');
+  const leaveRoom = confirm('Tem certeza que quer sair da sala?');
   if(leaveRoom){
     window.location = '../index.html';
   }

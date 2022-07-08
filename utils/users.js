@@ -15,8 +15,9 @@ function getCurrentUser(id){
 // Usuário saindo do chat
 function userLeave(id){
     const index = users.findIndex(user => user.id === id);
+  
     if(index !== -1){
-        return users.slice(index, 1)[0];
+      return users.splice(index, 1)[0];
     }
 }
 
@@ -30,4 +31,4 @@ module.exports = {
     getCurrentUser,
     userLeave,
     getRoomUsers
-}
+};
