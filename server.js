@@ -26,17 +26,15 @@ io.on("connection", (socket) => {
         const user = userJoin(socket.id, username, room);
         socket.join(user.room);
 
-        // Unicast
-        // Mensagem para um usuário específico
-        socket.emit("message", formatMessage(botName, "Olá, utilize o nosso chat com moderação!"));
-
         // Broadcast quando um usuário se conectar
         // Emite a mensagem para todos da sala específica menos para o usuário que está se conectando
         socket.broadcast
         .to(user.room)
         .emit(
             "message",
-            formatMessage(botName, `${user.username} entrou no chat.`)
+            formatMessage(botName, `${user.username} entrou no chat.`),
+            // Mural da entrada de usuários no console
+            console.log(`${username} entrou na sala ${room}.`)
         );
 
         // Enviando as informações do usuário e da sala
@@ -44,6 +42,11 @@ io.on("connection", (socket) => {
             room: user.room,
             users: getRoomUsers(user.room),
         });
+
+        // Unicast pois é uma mensagem para um usuário específico
+        socket.emit("message", formatMessage(botName, "Olá, utilize o nosso chat com moderação!"), 
+        // Mural exclusivo para o unicast da moderação no console
+        console.log(`${botName}: Olá, utilize o nosso chat com moderação!`));
     });
 
     // Procurando por uma mensagem
@@ -51,21 +54,30 @@ io.on("connection", (socket) => {
         const user = getCurrentUser(socket.id);
         io.to(user.room).emit("message", formatMessage(user.username, msg));
 
+        // Mural da envio de mensagem no console
+        console.log(`${user.username}: ${msg}`);
+
         // Bot alerta o usuário específico para não mandar palavrões
-        let bad_words = ['bobo', 'boba'];
+        let bad_words = ["bobo", "boba"];
         for(i in bad_words){
-            if(msg.toLowerCase() == bad_words[i]){
+            if(msg.toLowerCase().includes(bad_words[i])){
                 // Unicast
-                socket.emit('message', formatMessage(botName, 'Pare de falar palavrões, seja mais educado! 🤫'));
+                socket.emit("message", formatMessage(botName, "Pare de falar palavrões, seja mais educado! 🤫"));
+
+                // Mural exclusivo para o unicast de bad_words no console
+                console.log(`${botName}: Pare de falar palavrões, seja mais educado! 🤫`);
             }
         }
 
         // Bot agradece o usuário específico pelos elogios
-        let good_words = ['lindo', 'linda'];
+        let good_words = ["lindo", "linda"];
         for(i in good_words){
-            if(msg.toLowerCase() == good_words[i]){
+            if(msg.toLowerCase().includes(good_words[i])){
                 // Unicast
-                socket.emit('message', formatMessage(botName, 'Obrigado, são seus olhos! 😍'));
+                socket.emit("message", formatMessage(botName, "Obrigado, são seus olhos! 😍"));
+
+                // Mural exclusivo para o unicast de good_words no console
+                console.log(`${botName}: Obrigado, são seus olhos! 😍`);
             }
         }
     });
@@ -77,7 +89,9 @@ io.on("connection", (socket) => {
         if(user){
         io.to(user.room).emit(
             "message",
-            formatMessage(botName, `${user.username} saiu do chat.`)
+            formatMessage(botName, `${user.username} saiu do chat.`),
+            // Mural da saída de usuários no console
+            console.log(`${user.username} saiu da sala ${user.room}.`)
         );
 
         // Enviando as informações do usuário
