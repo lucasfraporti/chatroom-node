@@ -21,7 +21,8 @@ io.on('connection', socket => {
         const user = userJoin(socket.id, username, room);
         socket.join(user.room);
 
-        // Mensagem para o usuário atual
+        // Unicast
+        // Mensagem para um usuário específico
         socket.emit('message', formatMessage(botName, 'Olá, utilize o nosso chat com moderação!'))
 
         // Broadcast quando um usuário se conectar
@@ -39,6 +40,24 @@ io.on('connection', socket => {
     socket.on('chatMessage', msg => {
         const user = getCurrentUser(socket.id);
         io.to(user.room).emit('message', formatMessage(user.username, msg));
+
+        // Bot alerta o usuário específico para não mandar palavrões
+        let bad_words = ['bobo', 'boba'];
+        for(i in bad_words){
+            if(msg.toLowerCase() == bad_words[i]){
+                // Unicast
+                socket.emit('message', formatMessage(botName, 'Para de falar palavrões, seja mais educado! 🤫'));
+            }
+        }
+
+        // Bot agradece o usuário específico pelos elogios
+        let good_words = ['lindo', 'linda'];
+        for(i in good_words){
+            if(msg.toLowerCase() == good_words[i]){
+                // Unicast
+                socket.emit('message', formatMessage(botName, 'Obrigado, são seus olhos! 😍'));
+            }
+        }
     });
 
     // Executado quando o cliente se desconecta
