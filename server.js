@@ -69,7 +69,7 @@ io.on('connection', socket => {
             // Enviando informações dos usuários e da sala
             io.to(user.room).emit('roomUsers', {
                 room: user.room,
-                users: getRoomUsers(user.room)
+                users: getRoomUsers(user.room),
             });
         }
     });
