@@ -73,7 +73,7 @@ io.on("connection", (socket) => {
             formatMessageRoomExit(botName, `${user.username}`, user.room)
         );
 
-        // Enviando as informações do usuário e da sala
+        // Enviando pro servidor as informações da sala e do usuário
         io.to(user.room).emit("roomUsers", {
             room: user.room,
             users: getRoomUsers(user.room)
